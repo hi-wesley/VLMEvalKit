@@ -1514,7 +1514,15 @@ internvl_series = {}
 for group in internvl_groups:
     internvl_series.update(group)
 
-supported_VLM = {}
+supported_VLM = {
+
+    "llava_v1.5_7b": {
+        "class": "LLaVA",
+        "model_path": "liuhaotian/llava-v1.5-7b",
+        "torch_dtype": "float16"
+    }
+
+}
 
 model_groups = [
     ungrouped, o1_apis, api_models, xtuner_series, qwen_series, llava_series, granite_vision_series,
