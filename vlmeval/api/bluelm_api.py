@@ -86,7 +86,7 @@ def get_streaming_response(response: requests.Response):
             yield output
 
 
-def multimodal(images, text, url, key, temperature=0.6, max_tokens=32768, top_k=20, top_p=0.95, stream=True, history=[]):  # noqa: E501
+def multimodal(images, text, url, key, temperature=0.6, max_tokens=32768, top_k=20, top_p=0.95, stream=True, history=[], timeout=60):  # noqa: E501
     if images:
         pics = []
         for image in images:
@@ -102,7 +102,7 @@ def multimodal(images, text, url, key, temperature=0.6, max_tokens=32768, top_k=
             'text': text, 'key': key, 'temperature': temperature,
             'max_tokens': max_tokens, 'top_k': top_k, 'top_p': top_p, 'stream': stream
         }
-    response = requests.post(url, json=data, headers={"Content-Type": "application/json"})
+    response = requests.post(url, json=data, headers={"Content-Type": "application/json"}, timeout=timeout)
     if stream:
         final_text = ''
         for h in get_streaming_response(response):
@@ -125,6 +125,7 @@ class BlueLMWrapper(BaseAPI):
                  max_tokens: int = 32768,
                  top_k: int = 20,
                  top_p: float = 0.95,
+                 timeout: int = 60,
                  key: str = None,
                  url: str = 'http://api-ai.vivo.com.cn/multimodal',
                  **kwargs):
@@ -137,6 +138,7 @@ class BlueLMWrapper(BaseAPI):
         self.top_p = top_p
         self.url = url
         self.key = key
+        self.timeout = timeout
 
         if self.key is None:
             self.key = os.environ.get('BLUELM_API_KEY', None)
@@ -205,7 +207,8 @@ class BlueLMWrapper(BaseAPI):
 
         try:
             response = multimodal(
-                image_path, prompt, self.url, self.key, self.temperature, self.max_tokens, self.top_k, self.top_p)
+                images=image_path, text=prompt, url=self.url, key=self.key, temperature=self.temperature,
+                max_tokens=self.max_tokens, top_k=self.top_k, top_p=self.top_p, timeout=self.timeout)
             if kwargs['dataset'] in [
                 'MMBench_DEV_EN_V11', 'MMBench_DEV_CN_V11', 'MMBench_TEST_EN_V11', 'MMBench_TEST_CN_V11',
                 'AI2D_TEST', 'AI2D_TEST_TO_MASK', 'MMMU_DEV_VAL', 'MMStar',
