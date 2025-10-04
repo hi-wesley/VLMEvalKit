@@ -252,9 +252,9 @@ api_models = {
         retry=10,
         verbose=False,
     ),
-    "gpt-5-2025-08-07": partial(
+    "gpt-5": partial(
         GPT4V,
-        model="gpt-5-2025-08-07",
+        model="gpt-5",
         img_detail="high",
         retry=3,
         verbose=False,
@@ -604,7 +604,7 @@ api_models = {
 }
 
 import copy as cp
-api_models['gpt-5'] = cp.deepcopy(api_models['gpt-5-2025-08-07'])
+api_models['gpt-5'] = cp.deepcopy(api_models['gpt-5'])
 api_models['gpt-5-mini'] = cp.deepcopy(api_models['gpt-5-mini-2025-08-07'])
 api_models['gpt-5-nano'] = cp.deepcopy(api_models['gpt-5-nano-2025-08-07'])
 
